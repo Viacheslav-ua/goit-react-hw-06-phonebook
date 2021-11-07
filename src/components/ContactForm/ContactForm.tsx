@@ -6,13 +6,21 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import { connect } from "react-redux";
+import * as actions from "../../redux/actions"
 
 interface PropsType {
-  formSubmit: any;
-  findName: any;
+  onFormSubmit: any;
+  contacts: any;
 }
 
-const ContactForm: React.FC<PropsType> = ({ formSubmit, findName }) => {
+type contactsType = {
+  id: string;
+  name: string;
+  number: string;
+};
+
+const ContactForm: React.FC<PropsType> = ({ contacts, onFormSubmit }) => {
   const [name, setName] = useState<string>("");
   const [number, setNumber] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -28,11 +36,17 @@ const ContactForm: React.FC<PropsType> = ({ formSubmit, findName }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (findName(name)) {
+    const isName = contacts.items.find((item: contactsType) =>
+      item.name.toLowerCase().includes(name.toLowerCase())
+    )
+      // ? true
+      // : false;
+
+    if (isName) {
       toggleModal();
       return;
     }
-    formSubmit({ id: uuidv4(), name: name, number: number });
+    onFormSubmit({ id: uuidv4(), name: name, number: number });
     reset();
   };
 
@@ -85,4 +99,21 @@ const ContactForm: React.FC<PropsType> = ({ formSubmit, findName }) => {
     </>
   );
 };
-export default ContactForm;
+// export default ContactForm;
+const mapStateToProps = (state: any) => {
+  return {
+    contacts: state.contacts,
+  }
+}
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    onFormSubmit: (data: contactsType) => dispatch(actions.addContact(data)),
+  }
+}
+
+export default connect(
+  mapStateToProps, 
+  mapDispatchToProps
+  )(ContactForm);
+
