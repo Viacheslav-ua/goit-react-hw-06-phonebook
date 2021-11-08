@@ -1,16 +1,17 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
 import S from "./Filter.module.css";
+import { connect } from "react-redux";
+import { setFilter } from "../../redux/contacts/contacts-actions";
 
 interface PropsType {
   filterValue: string;
-  handleChangeFilter: any;
+  onChangeFilter: any;
 }
 
-const Filter: React.FC<PropsType> = ({ filterValue, handleChangeFilter }) => {
+const Filter: React.FC<PropsType> = ({ filterValue, onChangeFilter }) => {
   return (
     <div>
-      {/* <label className={S.caption}>Find contacts by name</label> */}
       <TextField
         label="Find contacts by name"
         variant="standard"
@@ -19,9 +20,23 @@ const Filter: React.FC<PropsType> = ({ filterValue, handleChangeFilter }) => {
         name="filter"
         className={S.input}
         value={filterValue}
-        onChange={handleChangeFilter}
+        onChange={onChangeFilter}
       />
     </div>
   );
 };
-export default Filter;
+
+const mapStateToProps = (state: any) => {
+  return {
+    filterValue: state.contacts.filter,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    onChangeFilter: (e: React.ChangeEvent<HTMLInputElement>) =>
+      dispatch(setFilter(e.currentTarget.value)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Filter);

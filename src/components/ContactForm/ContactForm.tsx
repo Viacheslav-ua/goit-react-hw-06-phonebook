@@ -7,7 +7,7 @@ import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { connect } from "react-redux";
-import * as actions from "../../redux/actions"
+import * as actions from "../../redux/contacts/contacts-actions";
 
 interface PropsType {
   onFormSubmit: any;
@@ -38,9 +38,7 @@ const ContactForm: React.FC<PropsType> = ({ contacts, onFormSubmit }) => {
     e.preventDefault();
     const isName = contacts.items.find((item: contactsType) =>
       item.name.toLowerCase().includes(name.toLowerCase())
-    )
-      // ? true
-      // : false;
+    );
 
     if (isName) {
       toggleModal();
@@ -99,21 +97,17 @@ const ContactForm: React.FC<PropsType> = ({ contacts, onFormSubmit }) => {
     </>
   );
 };
-// export default ContactForm;
+
 const mapStateToProps = (state: any) => {
   return {
     contacts: state.contacts,
-  }
-}
+  };
+};
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
     onFormSubmit: (data: contactsType) => dispatch(actions.addContact(data)),
-  }
-}
+  };
+};
 
-export default connect(
-  mapStateToProps, 
-  mapDispatchToProps
-  )(ContactForm);
-
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
