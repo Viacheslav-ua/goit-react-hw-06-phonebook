@@ -1,21 +1,24 @@
-import { createStore, combineReducers } from "redux";
-import { composeWithDevTools } from "redux-devtools-extension";
+import { configureStore } from "@reduxjs/toolkit";
 import contactsReducer from "./contacts/contacts-reducer";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import logger from "redux-logger";
 
-// type contactType = {
-//   id: string;
-//   name: string;
-//   number: string;
-// };
+const contactsPersistConfig = {
+  key: "contacts",
+  storage,
+  blacklist: ["filter"],
+};
 
-// interface actionTypes {
-//   type: string;
-//   payload: contactType | string;
-// }
-
-const rootReducer = combineReducers({
-  contacts: contactsReducer,
+const store = configureStore({
+  reducer: {
+    contacts: persistReducer(contactsPersistConfig, contactsReducer),
+  },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+  devTools: process.env.NODE_ENV === "development",
 });
 
-const store = createStore(rootReducer, composeWithDevTools());
-export default store;
+const persistor = persistStore(store);
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default { store, persistor };
